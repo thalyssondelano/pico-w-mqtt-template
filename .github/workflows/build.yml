@@ -13,17 +13,20 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake gcc-arm-none-eabi build-essential libnewlib-arm-none-eabi
+          sudo apt-get install -y cmake gcc-arm-none-eabi build-essential libnewlib-arm-none-eabi git
 
-      - name: Setup Pico SDK
-        uses: raspberrypi/setup-pico-sdk@v2
-        with:
-          pico-version: '2.3.1'
-          with-examples: false
+      - name: Setup Pico SDK Manually
+        run: |
+          git clone --branch 2.3.1 --depth 1 https://github.com/raspberrypi/pico-sdk.git /opt/pico-sdk
+          cd /opt/pico-sdk
+          git submodule update --init
+          echo "PICO_SDK_PATH=/opt/pico-sdk" >> $GITHUB_ENV
 
       - name: Create Dummy secrets.h for Build Test
         run: |
@@ -37,7 +40,7 @@ jobs:
 
       - name: Configure CMake
         run: |
-          cmake -B build -DPICO_BOARD=pico_w
+          cmake -B build -DPICO_BOARD=pico_w -DPICO_SDK_PATH=/opt/pico-sdk .
 
       - name: Compile Firmware
         run: |
