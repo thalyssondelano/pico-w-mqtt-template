@@ -11,6 +11,12 @@ on:
       - 'pico_sdk_import.cmake'
   pull_request:
     branches: [ main, master ]
+    paths:
+      - 'src/**'
+      - 'include/**'
+      - 'CMakeLists.txt'
+      - '.github/workflows/build.yml'
+      - 'pico_sdk_import.cmake'
 
 jobs:
   build:
