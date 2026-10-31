@@ -1,0 +1,50 @@
+name: Build Firmware CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake gcc-arm-none-eabi build-essential libnewlib-arm-none-eabi
+
+      - name: Setup Pico SDK
+        uses: raspberrypi/setup-pico-sdk@v2
+        with:
+          pico-version: '2.3.1'
+          with-examples: false
+
+      - name: Create Dummy secrets.h for Build Test
+        run: |
+          mkdir -p include
+          echo '#ifndef SECRETS_H' > include/secrets.h
+          echo '#define SECRETS_H' >> include/secrets.h
+          echo '#define WIFI_SSID "CI_WIFI"' >> include/secrets.h
+          echo '#define WIFI_PASSWORD "CI_PASSWORD"' >> include/secrets.h
+          echo '#define MQTT_BROKER_IP "127.0.0.1"' >> include/secrets.h
+          echo '#endif' >> include/secrets.h
+
+      - name: Configure CMake
+        run: |
+          cmake -B build -DPICO_BOARD=pico_w
+
+      - name: Compile Firmware
+        run: |
+          cmake --build build -j$(nproc)
+
+      - name: Upload Artifact (.uf2)
+        uses: actions/upload-artifact@v4
+        with:
+          name: pico-mqtt-firmware
+          path: build/*.uf2

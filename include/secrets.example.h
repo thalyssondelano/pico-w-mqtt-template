@@ -1,0 +1,8 @@
+#ifndef SECRETS_H
+#define SECRETS_H
+
+#define WIFI_SSID "WIFI_SSID"
+#define WIFI_PASSWORD "WIFI_PASSWORD"
+#define MQTT_BROKER_IP "MQTT_BROKER_IP"
+
+#endif

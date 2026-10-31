@@ -1,0 +1,17 @@
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+*.uf2
+*.elf
+*.bin
+*.hex
+*.map
+*.dis
+compile_commands.json
+include/secrets.h
+backend/.venv/
+__pycache__/
+*.pyc
+.DS_Store
+.vscode/
